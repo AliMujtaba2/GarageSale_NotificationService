@@ -1,2 +1,4 @@
 node_modules/
 serviceaccountkey.json
+.env
+.env.local

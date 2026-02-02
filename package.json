@@ -1,4 +1,3 @@
-
 {
   "name": "garagesale-notification-server",
   "version": "1.0.0",
@@ -8,13 +7,19 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": ["firebase", "fcm", "notifications", "express"],
+  "keywords": [
+    "firebase",
+    "fcm",
+    "notifications",
+    "express"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
-    "firebase-admin": "^12.0.0",
-    "cors": "^2.8.5"
+    "firebase-admin": "^12.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
