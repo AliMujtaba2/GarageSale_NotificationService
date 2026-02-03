@@ -3,26 +3,20 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 require('dotenv').config();
 
-// Validate required environment variables
-const requiredEnvVars = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'];
-const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+// Initialize Firebase Admin SDK
+let serviceAccount;
 
-if (missingEnvVars.length > 0) {
-  console.error('❌ Missing required environment variables:', missingEnvVars.join(', '));
-  console.error('Please set these environment variables in your deployment platform');
-  process.exit(1);
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  // For production (Vercel): Use environment variable
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+  // For local development: Use service account file
+  serviceAccount = require('./serviceAccountKey.json');
 }
 
-// Initialize Firebase Admin SDK using environment variables
 admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-  })
+  credential: admin.credential.cert(serviceAccount)
 });
-
-console.log('✅ Firebase Admin initialized for project:', process.env.FIREBASE_PROJECT_ID);
 
 const app = express();
 
