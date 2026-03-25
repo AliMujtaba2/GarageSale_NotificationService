@@ -114,6 +114,67 @@ app.post('/send-notification', async (req, res) => {
   }
 });
 
+app.post('/send-call-notification', async (req, res) => {
+  try {
+    const { recipientId, senderId, senderEmail, callType, meetingId } = req.body;
+
+    if (!recipientId || !senderId || !callType || !meetingId) {
+      return res.status(400).json({ error: 'Missing required fields for call' });
+    }
+
+    console.log('📞 Sending call notification to:', recipientId);
+
+    const userDoc = await admin.firestore().collection('users').doc(recipientId).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'Recipient not found' });
+    }
+
+    const fcmToken = userDoc.data().fcmToken;
+    if (!fcmToken) return res.status(400).json({ error: 'Recipient has no FCM token' });
+
+    const payload = {
+      token: fcmToken,
+      notification: {
+        title: `${senderEmail || 'Someone'} is calling you`,
+        body: callType === 'voice' ? 'Voice call' : 'Video call'
+      },
+      data: {
+        type: 'incoming_call',
+        senderId,
+        recipientId,
+        callType,
+        meetingId
+      },
+      android: {
+        priority: 'high',
+        notification: {
+          sound: 'default',
+          channelId: 'calls'
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default',
+            badge: 1
+          }
+        }
+      }
+    };
+
+    const response = await admin.messaging().send(payload);
+
+    console.log('✅ Call notification sent:', response);
+
+    res.json({ success: true, messageId: response });
+
+  } catch (error) {
+    console.error('❌ Error sending call notification:', error);
+    res.status(500).json({ error: 'Failed to send call notification', details: error.message });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
