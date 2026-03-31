@@ -75,7 +75,9 @@ app.post('/send-notification', async (req, res) => {
         type: 'message',
         senderId: senderId,
         recipientId: recipientId,
+        senderEmail: senderEmail,
         conversationId: conversationId || ''
+        
       },
       android: {
         priority: 'high',
