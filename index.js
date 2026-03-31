@@ -135,10 +135,6 @@ app.post('/send-call-notification', async (req, res) => {
 
     const payload = {
       token: fcmToken,
-      notification: {
-        title: `${senderEmail || 'Someone'} is calling you`,
-        body: callType === 'voice' ? 'Voice call' : 'Video call'
-      },
       data: {
         type: 'incoming_call',
         senderId,
