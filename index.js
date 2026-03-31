@@ -141,6 +141,7 @@ app.post('/send-call-notification', async (req, res) => {
         type: 'incoming_call',
         senderId,
         recipientId,
+        senderEmail: senderEmail,
         callType,
         meetingId
       },
